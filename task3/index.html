@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Login | Secure Access</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-box">
+            <header>
+                <div class="icon">🔒</div>
+                <h1>Welcome Back</h1>
+                <p>Please enter your details to sign in</p>
+            </header>
+            <form id="loginForm">
+                <div class="input-field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                    <span class="error-msg" id="userError"></span>
+                </div>
+                <div class="input-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <span class="error-msg" id="passError"></span>
+                </div>
+                <button type="submit" id="loginBtn">Sign In</button>
+            </form>
+            <div id="authMessage" class="auth-message"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const authMessage = document.getElementById('authMessage');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+
+            // Basic UI validation
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            let valid = true;
+
+            if (username.length < 3) {
+                document.getElementById('userError').innerText = 'Username must be at least 3 characters.';
+                valid = false;
+            } else {
+                document.getElementById('userError').innerText = '';
+            }
+
+            if (password.length < 6) {
+                document.getElementById('passError').innerText = 'Password must be at least 6 characters.';
+                valid = false;
+            } else {
+                document.getElementById('passError').innerText = '';
+            }
+
+            if (!valid) return;
+
+            // Database authentication
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    authMessage.innerText = result.message;
+                    authMessage.className = 'auth-message success';
+                } else {
+                    authMessage.innerText = result.message;
+                    authMessage.className = 'auth-message error';
+                }
+            } catch (err) {
+                authMessage.innerText = 'Could not connect to server.';
+                authMessage.className = 'auth-message error';
+            }
+        };
+    </script>
+</body>
+
+</html>

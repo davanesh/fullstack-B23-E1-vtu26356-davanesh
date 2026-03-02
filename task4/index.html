@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Insights | Order Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Retail Dashboard</h1>
+            <p>Customer Order Analytics & History</p>
+        </header>
+
+        <section class="report-section">
+            <div class="report-card" id="highestOrderCard">
+                <h3>Highest Value Order</h3>
+                <p class="value" id="topOrderValue">$0.00</p>
+                <p class="meta" id="topOrderDate">--</p>
+            </div>
+            <div class="report-card primary" id="activeCustomerCard">
+                <h3>Most Active Customer</h3>
+                <p class="value" id="topCustomerName">--</p>
+                <p class="meta" id="topCustomerCount">0 Orders</p>
+            </div>
+        </section>
+
+        <section class="history-section">
+            <div class="section-header">
+                <h2>Order History</h2>
+                <span class="badge">Live Data</span>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <!-- Data will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        async function loadDashboard() {
+            try {
+                // Load Orders
+                const ordersRes = await fetch('/api/orders');
+                const orders = await ordersRes.json();
+                const tbody = document.getElementById('orderTableBody');
+                tbody.innerHTML = orders.map(o => {
+                    const amt = parseFloat(o.amount);
+                    return `
+                        <tr>
+                            <td>#${o.order_id}</td>
+                            <td><strong>${o.customer_name}</strong></td>
+                            <td><span class="product-tag">${o.product_name}</span></td>
+                            <td class="amount">$${amt.toFixed(2)}</td>
+                            <td>${new Date(o.order_date).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // Load Reports
+                const reportsRes = await fetch('/api/reports');
+                const reports = await reportsRes.json();
+
+                document.getElementById('topOrderValue').innerText = `$${parseFloat(reports.highestOrder.amount).toFixed(2)}`;
+                document.getElementById('topOrderDate').innerText = `Placed on ${new Date(reports.highestOrder.order_date).toLocaleDateString()}`;
+
+                document.getElementById('topCustomerName').innerText = reports.activeCustomer.name;
+                document.getElementById('topCustomerCount').innerText = `${reports.activeCustomer.order_count} Orders Total`;
+
+            } catch (err) {
+                console.error('Dashboard Load Error:', err);
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+
+</html>
