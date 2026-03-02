@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Insights Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🎓</span>
+                <h2>EduPortal</h2>
+            </div>
+            <nav>
+                <div class="nav-item active">Dashboard</div>
+                <div class="nav-item">Students</div>
+                <div class="nav-item">Analytics</div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="top-bar">
+                <h1>Student Statistics</h1>
+                <div class="user-profile">
+                    <span>Admin User</span>
+                    <div class="avatar"></div>
+                </div>
+            </header>
+
+            <section class="stats-grid" id="statsGrid">
+                <!-- Stats cards will be injected here -->
+            </section>
+
+            <section class="table-section">
+                <div class="table-controls">
+                    <div class="control-group">
+                        <label>Filter by Dept:</label>
+                        <select id="deptFilter">
+                            <option value="">All Departments</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mechanical">Mechanical</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Sort by:</label>
+                        <select id="sortSelect">
+                            <option value="date">Registry Date</option>
+                            <option value="name">Name (A-Z)</option>
+                            <option value="dob">Date of Birth</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table id="studentTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>DOB</th>
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        async function fetchStats() {
+            const res = await fetch('/api/stats');
+            const stats = await res.json();
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = stats.map(s => `
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>${s.department}</h3>
+                        <p class="count">${s.count}</p>
+                    </div>
+                    <div class="stat-icon">👥</div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchStudents() {
+            const dept = document.getElementById('deptFilter').value;
+            const sort = document.getElementById('sortSelect').value;
+            const res = await fetch(`/api/students?dept=${dept}&sort=${sort}`);
+            const students = await res.json();
+
+            const tbody = document.getElementById('tableBody');
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">No students found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = students.map(s => `
+                <tr>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.email}</td>
+                    <td><span class="badge">${s.department}</span></td>
+                    <td>${new Date(s.dob).toLocaleDateString()}</td>
+                    <td>${s.phone}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('deptFilter').onchange = fetchStudents;
+        document.getElementById('sortSelect').onchange = fetchStudents;
+
+        // Initial Load
+        fetchStats();
+        fetchStudents();
+    </script>
+</body>
+
+</html>
