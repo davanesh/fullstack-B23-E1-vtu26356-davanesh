@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Customer Feedback</h2>
+        <form id="feedbackForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <span class="error-msg" id="nameError">Name must be at least 3 characters.</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <span class="error-msg" id="emailError">Please enter a valid email address.</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="feedback">Feedback:</label>
+                <textarea id="feedback" name="feedback" rows="4" required></textarea>
+                <span class="error-msg" id="feedbackError">Feedback must be at least 10 characters.</span>
+            </div>
+
+            <p class="submit-instructions">Double-click the button below to submit.</p>
+            <button type="button" id="submitBtn">Submit Feedback</button>
+        </form>
+        <div id="confirmationMsg" class="hidden">Thank you for your feedback!</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

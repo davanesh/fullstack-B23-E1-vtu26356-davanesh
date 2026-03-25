@@ -1,0 +1,12 @@
+{
+  "name": "task5",
+  "version": "1.0.0",
+  "description": "Transaction-Based Payment Simulation",
+  "main": "payment.js",
+  "scripts": {
+    "start": "node payment.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.9.0"
+  }
+}

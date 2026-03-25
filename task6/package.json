@@ -1,0 +1,12 @@
+{
+  "name": "task6",
+  "version": "1.0.0",
+  "description": "Automated Logging using Triggers & Views",
+  "main": "test_trigger.js",
+  "scripts": {
+    "start": "node test_trigger.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.9.0"
+  }
+}
