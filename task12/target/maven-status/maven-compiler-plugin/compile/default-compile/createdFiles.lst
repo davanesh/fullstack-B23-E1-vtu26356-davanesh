@@ -1,0 +1,4 @@
+com\davanesh\model\Product.class
+com\davanesh\controller\ProductController.class
+com\davanesh\service\ProductService.class
+com\davanesh\Task12Application.class
